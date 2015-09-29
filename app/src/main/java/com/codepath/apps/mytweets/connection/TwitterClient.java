@@ -29,7 +29,7 @@ import com.loopj.android.http.RequestParams;
  */
 public class TwitterClient extends OAuthBaseClient {
 	public static final Class<? extends Api> REST_API_CLASS = TwitterApi.class; // Change this
-	public static final String REST_URL = "https://api.twitter.com/1.1"; // Change this, base API URL
+	public static final String REST_URL = "https://api.twitter.com/1.1/"; // Change this, base API URL
 	public static final String REST_CONSUMER_KEY = "pfUbe4uUg2ZLPD5Ko5TXRp3jD";       // Change this
 	public static final String REST_CONSUMER_SECRET = "2Vz26rQPbtqmSeuF1QnEjPWaf0Yl1esf4FXzbm8PncekDN04L2"; // Change this
 	public static final String REST_CALLBACK_URL = "oauth://codepathtweets"; // Change this (here and in manifest)
@@ -40,17 +40,18 @@ public class TwitterClient extends OAuthBaseClient {
 
 
 	//get timeline data
-	public void getHomeTimeline(AsyncHttpResponseHandler handler){
+	public void getHomeTimeline(JsonHttpResponseHandler handler){
 		String apiUrl= getApiUrl("statuses/home_timeline.json");
 		RequestParams params = new RequestParams();
 		params.put("count", 25);
 		params.put("since_id", 1);
-		client.get(apiUrl, params, handler);
-		Log.d("My response2", "GET is fine");
+		getClient().get(apiUrl, params, handler);
+		Log.d("My response params", apiUrl+" "+params.toString());
+		Log.d("My response homeTimelin", "GET is fine");
 		Toast.makeText(context, "Api GET call was sucessfull", Toast.LENGTH_SHORT).show();
 	}
 
-	//composing tweet
+/*	//composing tweet
 	public void postTweetOnTimeline(AsyncHttpResponseHandler handler){
 
 		String apiUrl= getApiUrl("statuses/home_timeline.json");
@@ -59,9 +60,7 @@ public class TwitterClient extends OAuthBaseClient {
 		params.put("since", 1);
 		getClient().get(apiUrl, params, handler);
 
-	}
-
-
+	}*/
 
 	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
 	 * 	  i.e getApiUrl("statuses/home_timeline.json");

@@ -1,6 +1,6 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:2:1-54:12
+ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:2:1-59:12
 	xmlns:android
 		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:2:11-69
 	package
@@ -38,7 +38,7 @@ ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.
 	android:name
 		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:13:22-72
 application
-ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:15:5-52:19
+ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:15:5-57:19
 MERGED from [com.android.support:appcompat-v7:23.0.0] /Users/dbykovskyy/Git/practice/MyTweets/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.0/AndroidManifest.xml:22:5-20
 MERGED from [com.android.support:support-v4:23.0.0] /Users/dbykovskyy/Git/practice/MyTweets/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.0/AndroidManifest.xml:22:5-20
 	android:label
@@ -64,7 +64,7 @@ ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.
 	android:value
 		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:26:13-30
 activity#com.codepath.apps.mytweets.activities.LoginActivity
-ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:28:9-47:20
+ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:28:9-46:20
 	android:label
 		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:30:13-45
 	android:theme
@@ -72,37 +72,37 @@ ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.
 	android:name
 		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:29:13-53
 intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
-ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:32:13-36:29
+ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:32:13-35:29
 action#android.intent.action.MAIN
 ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:33:17-69
 	android:name
 		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:33:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:35:17-77
+ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:34:17-77
 	android:name
-		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:35:27-74
+		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:34:27-74
 intent-filter#android.intent.action.VIEW+android.intent.category.BROWSABLE+android.intent.category.DEFAULT
-ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:37:13-46:29
+ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:37:13-45:29
 action#android.intent.action.VIEW
 ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:38:17-69
 	android:name
 		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:38:25-66
 category#android.intent.category.DEFAULT
-ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:40:17-76
+ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:39:17-76
 	android:name
-		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:40:27-73
+		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:39:27-73
 category#android.intent.category.BROWSABLE
-ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:41:17-78
+ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:40:17-78
 	android:name
-		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:41:27-75
+		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:40:27-75
 data
-ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:43:17-45:46
+ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:42:17-44:46
 	android:host
-		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:44:21-50
+		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:43:21-50
 	android:scheme
-		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:45:21-43
+		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:44:21-43
 activity#com.codepath.apps.mytweets.activities.TimeLineActivity
-ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:48:9-51:20
+ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:48:9-53:20
 	android:label
 		ADDED from /Users/dbykovskyy/Git/practice/MyTweets/app/src/main/AndroidManifest.xml:50:13-61
 	android:name

@@ -12,7 +12,6 @@ import android.widget.Toast;
 import com.codepath.apps.mytweets.R;
 import com.codepath.apps.mytweets.connection.TwitterApplication;
 import com.codepath.apps.mytweets.connection.TwitterClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
@@ -39,20 +38,21 @@ public class TimeLineActivity extends AppCompatActivity {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                Log.d("My response1", response.toString());
+                Log.d("My response onSucess", response.toString());
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.d("My response2", errorResponse.toString());
+                Log.d("My response onFailure", errorResponse.toString());
+                Log.d("My response onFailure", throwable.toString());
                 Toast.makeText(getApplicationContext(), "onFailure response failed", Toast.LENGTH_SHORT).show();
             }
-
+/*
             @Override
             public void handleMessage(Message message) {
                 Log.d("My response3", message.toString());
                 Toast.makeText(getApplicationContext(), "onHandle response message", Toast.LENGTH_SHORT).show();
-            }
+            }*/
         });
     }
 
