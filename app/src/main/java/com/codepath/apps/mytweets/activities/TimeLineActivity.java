@@ -47,12 +47,11 @@ public class TimeLineActivity extends AppCompatActivity {
                 Log.d("My response onFailure", throwable.toString());
                 Toast.makeText(getApplicationContext(), "onFailure response failed", Toast.LENGTH_SHORT).show();
             }
-/*
             @Override
             public void handleMessage(Message message) {
                 Log.d("My response3", message.toString());
                 Toast.makeText(getApplicationContext(), "onHandle response message", Toast.LENGTH_SHORT).show();
-            }*/
+            }
         });
     }
 
