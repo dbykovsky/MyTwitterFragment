@@ -1,10 +1,13 @@
 package com.codepath.apps.mytweets.activities;
 
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.internal.app.ToolbarActionBar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.codepath.apps.mytweets.R;
 import com.codepath.apps.mytweets.connection.TwitterApplication;
@@ -33,16 +36,23 @@ public class TimeLineActivity extends AppCompatActivity {
     private void populateTimeline(){
 
         client.getHomeTimeline(new JsonHttpResponseHandler() {
+
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d("DEBUG", response.toString());
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                Log.d("My response1", response.toString());
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                Log.d("DEBUG", errorResponse.toString());
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d("My response2", errorResponse.toString());
+                Toast.makeText(getApplicationContext(), "onFailure response failed", Toast.LENGTH_SHORT).show();
             }
 
+            @Override
+            public void handleMessage(Message message) {
+                Log.d("My response3", message.toString());
+                Toast.makeText(getApplicationContext(), "onHandle response message", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 

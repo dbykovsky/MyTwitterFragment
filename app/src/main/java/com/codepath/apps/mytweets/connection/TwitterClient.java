@@ -4,10 +4,14 @@ import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TwitterApi;
 
 import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
 
 
+import com.codepath.apps.mytweets.activities.TimeLineActivity;
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 
@@ -41,8 +45,9 @@ public class TwitterClient extends OAuthBaseClient {
 		RequestParams params = new RequestParams();
 		params.put("count", 25);
 		params.put("since_id", 1);
-		getClient().get(apiUrl, params, handler);
-
+		client.get(apiUrl, params, handler);
+		Log.d("My response2", "GET is fine");
+		Toast.makeText(context, "Api GET call was sucessfull", Toast.LENGTH_SHORT).show();
 	}
 
 	//composing tweet
