@@ -25,19 +25,7 @@ public class TimeLineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_time_line);
         client = TwitterApplication.getRestClient(); //singleton
-        //populateTimeline();
-        client.getHomeTimeline(new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d("DEBUG", response.toString());
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                Log.d("DEBUG", errorResponse.toString());
-            }
-
-        });
+        populateTimeline();
     }
 
     //Send API req to get timeline
