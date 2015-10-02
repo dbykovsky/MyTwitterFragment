@@ -1610,7 +1610,7 @@ containing a value of this type.
         public static final int alertTitle=0x7f0c002e;
         public static final int always=0x7f0c001b;
         public static final int beginning=0x7f0c0018;
-        public static final int button=0x7f0c0051;
+        public static final int bt_button_compose=0x7f0c0051;
         public static final int buttonPanel=0x7f0c0034;
         public static final int cancel_action=0x7f0c0058;
         public static final int checkbox=0x7f0c0036;

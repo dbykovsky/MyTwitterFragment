@@ -1,37 +1,33 @@
 package com.codepath.apps.mytweets.activities;
 
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.codepath.apps.mytweets.R;
-import com.codepath.apps.mytweets.connection.TwitterApplication;
 import com.codepath.apps.mytweets.connection.TwitterClient;
-import com.codepath.apps.mytweets.models.Tweet;
 import com.codepath.apps.mytweets.models.User;
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 
-import org.apache.http.Header;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 public class ComposeTweetActivity extends AppCompatActivity {
+    SharedPreferences sharedpreferences;
+    public static final String CURRENT_USER_PREFERECES = "CurrentUserPreferences";
+    public static final String userName = "userName";
+    public static final String userScreenName = "userScreenName";
+    public static final String userPicUrl = "userPicUrl";
+
     private TextView tv_userName;
     private TextView tv_userScreenName;
     private ImageView iv_userProfilePic;
     private Button bt_submitButton;
 
-    private TwitterClient client;
-    private User currentUser;
+
 
 
 
@@ -40,10 +36,12 @@ public class ComposeTweetActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compose_tweet);
 
-        //get user data
-        currentUser = new User();
-        client = TwitterApplication.getRestClient();
-        getCurrentUser();
+        //get user data from shared prefferences
+        SharedPreferences mSettings = this.getSharedPreferences(CURRENT_USER_PREFERECES, 0);
+        String uName = mSettings.getString(userName, "missing");
+        String uScreenName= mSettings.getString(userScreenName, "missing");
+        String uPicUrl= mSettings.getString(userPicUrl, "missing");
+
 
         //set up views
         tv_userName=(TextView)findViewById(R.id.tv_user_name_compose);
@@ -53,14 +51,11 @@ public class ComposeTweetActivity extends AppCompatActivity {
 
 
         //setting user name and user screen name
-        tv_userName.setText(currentUser.getUserName());
-        tv_userScreenName.setText(currentUser.getScreenName());
+        tv_userName.setText(uName);
+        tv_userScreenName.setText(uScreenName);
         //setting user pic
         iv_userProfilePic.setImageResource(0);
-        Picasso.with(this).load(currentUser.getProfileImageUrl()).into(iv_userProfilePic);
-
-        //test current user name
-        Toast.makeText(getApplicationContext(), currentUser.getUserName(), Toast.LENGTH_SHORT).show();
+        Picasso.with(this).load(uPicUrl).into(iv_userProfilePic);
 
 
         //action bar settings
@@ -69,30 +64,6 @@ public class ComposeTweetActivity extends AppCompatActivity {
         actionBar.setIcon(R.mipmap.ic_white_twitter_bird);
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setElevation(0);
-
-    }
-
-    private void getCurrentUser(){
-        //Send API req to get user
-
-            client.getCurrentUserInfo(new JsonHttpResponseHandler() {
-
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    Toast.makeText(getApplicationContext(), "onSuccess response worked", Toast.LENGTH_SHORT).show();
-                    currentUser = User.fromJsonObject(response);
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    if (errorResponse != null) {
-                        Log.d("My user onFailure", errorResponse.toString());
-                    }
-                    Log.d("My user onFailure", throwable.toString());
-                    Toast.makeText(getApplicationContext(), "Couldn't retrieve user's info", Toast.LENGTH_SHORT).show();
-                }
-
-            });
 
     }
 

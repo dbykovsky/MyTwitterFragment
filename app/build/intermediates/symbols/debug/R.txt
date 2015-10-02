@@ -469,7 +469,7 @@ int id activity_chooser_view_content 0x7f0c0024
 int id alertTitle 0x7f0c002e
 int id always 0x7f0c001b
 int id beginning 0x7f0c0018
-int id button 0x7f0c0051
+int id bt_button_compose 0x7f0c0051
 int id buttonPanel 0x7f0c0034
 int id cancel_action 0x7f0c0058
 int id checkbox 0x7f0c0036
