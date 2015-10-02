@@ -12,6 +12,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name="com.codepath.apps.mytweets.connection.TwitterApplication"
         android:allowBackup="true"
@@ -48,6 +50,10 @@
         <activity
             android:name="com.codepath.apps.mytweets.activities.TimeLineActivity"
             android:label="@string/title_activity_time_line" >
+        </activity>
+        <activity
+            android:name="com.codepath.apps.mytweets.activities.ComposeTweetActivity"
+            android:label="@string/title_activity_compose_tweet" >
         </activity>
     </application>
 

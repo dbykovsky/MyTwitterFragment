@@ -6,7 +6,9 @@
     <string name="login_label">Log in</string>
     <string name="title_activity">Connect to twitter</string>
     <string name="title_activity_time_line">TimeLineActivity</string>
+    <string name="created_at">Created At</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_compose_tweet">ComposeTweetActivity</string>
 
 </resources>

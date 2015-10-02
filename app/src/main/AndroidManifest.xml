@@ -12,6 +12,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".connection.TwitterApplication"
         android:allowBackup="true"
@@ -31,11 +33,12 @@
             android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
@@ -44,16 +47,14 @@
                     android:scheme="oauth" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.TimeLineActivity"
             android:label="@string/title_activity_time_line" >
-
-
         </activity>
-
-
-
+        <activity
+            android:name=".activities.ComposeTweetActivity"
+            android:label="@string/title_activity_compose_tweet" >
+        </activity>
     </application>
 
 </manifest>

@@ -40,16 +40,24 @@ public class TwitterClient extends OAuthBaseClient {
 
 
 	//get timeline data
-	public void getHomeTimeline(JsonHttpResponseHandler handler){
+	public void getHomeTimeline(int page,JsonHttpResponseHandler handler){
 		String apiUrl= getApiUrl("statuses/home_timeline.json");
 		RequestParams params = new RequestParams();
 		params.put("count", 25);
-		params.put("since_id", 1);
+		params.put("page", page);
 		getClient().get(apiUrl, params, handler);
 		Log.d("My response params", apiUrl+" "+params.toString());
 		Log.d("My response homeTimelin", "GET is fine");
 		Toast.makeText(context, "Api GET call was sucessfull", Toast.LENGTH_SHORT).show();
 	}
+
+	//getUserInfo
+
+	public void getCurrentUserInfo(JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("account/verify_credentials.json");
+		getClient().get(apiUrl, handler);
+	}
+
 
 /*	//composing tweet
 	public void postTweetOnTimeline(AsyncHttpResponseHandler handler){
