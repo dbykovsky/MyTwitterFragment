@@ -1,21 +1,34 @@
 package com.codepath.apps.mytweets.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.format.DateUtils;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codepath.apps.mytweets.R;
+import com.codepath.apps.mytweets.activities.TimeLineActivity;
+import com.codepath.apps.mytweets.connection.TwitterApplication;
+import com.codepath.apps.mytweets.connection.TwitterClient;
 import com.codepath.apps.mytweets.models.Tweet;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.squareup.picasso.Picasso;
+
+import org.apache.http.Header;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,20 +40,22 @@ import java.util.Locale;
  */
 
 public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
+    private TwitterClient client;
 
     static class ViewHolder {
-
         TextView tvUserName;
         TextView tvTweetText;
         TextView tvTimeStamp;
+        TextView tvRetweetCount;
+        TextView tvFavouritesCount;
+        ImageView ivTwetImage;
         ImageView ivProfileImage;
-
-
+        ImageView ivReplyToTweet;
     }
 
 
     public TweetsArrayAdapter(Context context, List<Tweet> tweets) {
-        super(context, android.R.layout.simple_expandable_list_item_1, tweets);
+        super(context, R.layout.tweet_item, tweets);
     }
 
 
@@ -54,11 +69,15 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         if (convertView == null) {
             viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.item_tweet, parent, false);
+            convertView = inflater.inflate(R.layout.tweet_item, parent, false);
             viewHolder.tvUserName = (TextView) convertView.findViewById(R.id.tv_profile_name);
             viewHolder.tvTweetText = (TextView) convertView.findViewById(R.id.tv_tweet_text);
             viewHolder.ivProfileImage = (ImageView) convertView.findViewById(R.id.iv_userPic);
             viewHolder.tvTimeStamp = (TextView) convertView.findViewById(R.id.tv_timestamp);
+            viewHolder.tvRetweetCount = (TextView) convertView.findViewById(R.id.tvRetweets);
+            viewHolder.tvFavouritesCount = (TextView) convertView.findViewById(R.id.tvFavoritest);
+            viewHolder.ivTwetImage = (ImageView) convertView.findViewById(R.id.iv_tweetImage);
+            viewHolder.ivReplyToTweet = (ImageView) convertView.findViewById(R.id.ivReply);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -67,15 +86,86 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         Spannable userScreenName  = new SpannableString(tweet.getUser().getUserName()+" @" +tweet.getUser().getScreenName());
         int spanStart = tweet.getUser().getUserName().length()+1;
         int spanEnds = spanStart+tweet.getUser().getScreenName().length()+1;
-        userScreenName.setSpan(new ForegroundColorSpan(getContext().getResources().getColor(R.color.gull_gray)), spanStart,spanEnds, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        userScreenName.setSpan(new ForegroundColorSpan(getContext().getResources().getColor(R.color.twitter_gray)), spanStart, spanEnds, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         viewHolder.tvUserName.setText(userScreenName);
         viewHolder.tvTweetText.setText(tweet.getBody());
         viewHolder.tvTimeStamp.setText(getRelativeTimeAgo(tweet.getCreatedAt()));
+
+        if(tweet.getRetweetCount()>0){
+            viewHolder.tvRetweetCount.setText(String.valueOf(tweet.getRetweetCount()));
+        }
+        if(tweet.getRetweetCount()>0) {
+            viewHolder.tvFavouritesCount.setText(String.valueOf(tweet.getFavouritesCount()));
+        }
+
+
+        viewHolder.ivTwetImage.setImageResource(0);
+        if(tweet.getMediaUrl()!=null){
+            Picasso.with(getContext()).load(tweet.getMediaUrl()).into(viewHolder.ivTwetImage);
+        }
+
+
         viewHolder.ivProfileImage.setImageResource(0);
         Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(viewHolder.ivProfileImage);
 
+
+        //listener to reply to a tweet
+        viewHolder.ivReplyToTweet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buildDialog(getContext(), tweet).show();
+
+            }
+        });
+
+
         return convertView;
+    }
+
+
+
+    public AlertDialog.Builder buildDialog(Context c, final Tweet tweet) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(c, android.R.style.Theme_Material_Light_Dialog_NoActionBar);
+
+        final EditText replyText = new EditText(c);
+        replyText.setText("@" + tweet.getUser().getScreenName() + " ");
+        replyText.setSelection(replyText.getText().length());
+        builder.setTitle("In reply to "+tweet.getUser().getUserName());
+        builder.setView(replyText);
+        builder.setIcon(R.drawable.ic_twitter_bird);
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                client = TwitterApplication.getRestClient();
+                client.replyToTweetTweet(new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        Toast.makeText(getContext(),"Sorry, couldn't reply to this tweet", Toast.LENGTH_LONG).show();
+                    }
+                },replyText.getText().toString(), tweet.getId());
+
+
+                dialog.dismiss();
+            }
+        });
+
+        return builder;
     }
 
 
@@ -103,7 +193,7 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         }else if(relativeDate.contains("day")){
             return relativeDate.replaceAll("[^0-9]+", "d");
         }else return relativeDate.replaceAll("[^0-9]+", "m");
-        
+
 
     }
 }

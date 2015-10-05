@@ -1,9 +1,13 @@
 package com.codepath.apps.mytweets.activities;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -20,9 +24,8 @@ import org.apache.http.Header;
 import org.json.JSONObject;
 
 public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
-	SharedPreferences sharedpreferences;
-	public static final String CURRENt_USER_PREFERECES = "CurrentUserPreferences";
-	private TwitterClient client;
+	private final String COMPOSE_ACTIVITY_TAG = "LOGIN_ACTIVITY";
+	public static final String CURRENT_USER_PREFERECES = "CurrentUserPreferences";
 	private User currentUser;
 	public static final String userName = "userName";
 	public static final String userScreenName = "userScreenName";
@@ -33,8 +36,6 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
-		client = TwitterApplication.getRestClient();
-
 	}
 
 
@@ -49,45 +50,46 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 	// i.e Display application "homepage"
 	@Override
 	public void onLoginSuccess() {
-		//get current User object and write it to shared preferences
-		currentUser = new User();
 		getCurrentUser();
-
-		//specify preference file
-		sharedpreferences = this.getSharedPreferences(CURRENt_USER_PREFERECES, Context.MODE_PRIVATE);
-		//edit shared preferences
-		SharedPreferences.Editor editor = sharedpreferences.edit();
-		editor.putString(userName, currentUser.getUserName());
-		editor.putString(userScreenName, currentUser.getScreenName());
-		editor.putString(userPicUrl, currentUser.getProfileImageUrl());
-		editor.commit();
-
-		Toast.makeText(getApplicationContext(), "user name "+currentUser.getUserName(), Toast.LENGTH_SHORT).show();
-		 //send intent
-		 Intent i = new Intent(this, TimeLineActivity.class);
-		 startActivity(i);
 	}
+
 
 	private void getCurrentUser(){
 		//Send API req to get user
 
-		client.getCurrentUserInfo(new JsonHttpResponseHandler() {
-			@Override
-			public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-				Toast.makeText(getApplicationContext(), "onSuccess login worked", Toast.LENGTH_SHORT).show();
-				currentUser = User.fromJsonObject(response);
-			}
+		if(!isNetworkAvailable()){
+			buildDialog(this).show();
+		}else{
 
-			@Override
-			public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-				if (errorResponse != null) {
-					Log.d("My user onFailure", errorResponse.toString());
+			getClient().getCurrentUserInfo(new JsonHttpResponseHandler() {
+				@Override
+				public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+					currentUser = new User();
+					currentUser = User.fromJsonObject(response);
+					SharedPreferences sharedpreferences = LoginActivity.this.getSharedPreferences(CURRENT_USER_PREFERECES, Context.MODE_PRIVATE);
+					//edit shared preferences
+					SharedPreferences.Editor editor = sharedpreferences.edit();
+					editor.putString(userName, currentUser.getUserName());
+					editor.putString(userScreenName, currentUser.getScreenName());
+					editor.putString(userPicUrl, currentUser.getProfileImageUrl());
+					editor.apply();
+
+					Intent i = new Intent(LoginActivity.this, TimeLineActivity.class);
+					i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					startActivity(i);
 				}
-				Log.d("My user onFailure", throwable.toString());
-				Toast.makeText(getApplicationContext(), "Couldn't retrieve user's info", Toast.LENGTH_SHORT).show();
-			}
 
-		});
+				@Override
+				public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+					if (errorResponse != null) {
+						Log.d(COMPOSE_ACTIVITY_TAG , errorResponse.toString());
+					}
+					Log.d(COMPOSE_ACTIVITY_TAG , throwable.toString());
+				}
+
+			});
+
+		}
 	}
 
 
@@ -104,5 +106,37 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 	public void loginToRest(View view) {
 		getClient().connect();
 	}
+
+
+	protected Boolean isNetworkAvailable() {
+		ConnectivityManager connectivityManager
+				= (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+		return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+	}
+
+
+	//Show alert dialog if network is not awailable
+	public AlertDialog.Builder buildDialog(Context c) {
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(c, android.R.style.Theme_Material_Light_Dialog_NoActionBar);
+		builder.setTitle("No Internet connection.");
+		builder.setMessage("Only offline content is available");
+		builder.setIcon(R.drawable.ic_twitter_bird);
+
+		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				Intent i = new Intent(LoginActivity.this, TimeLineActivity.class);
+				i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(i);
+			}
+		});
+
+		return builder;
+	}
+
 
 }

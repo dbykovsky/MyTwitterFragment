@@ -48,7 +48,6 @@ public class TwitterClient extends OAuthBaseClient {
 		getClient().get(apiUrl, params, handler);
 		Log.d("My response params", apiUrl+" "+params.toString());
 		Log.d("My response homeTimelin", "GET is fine");
-		Toast.makeText(context, "Api GET call was sucessfull", Toast.LENGTH_SHORT).show();
 	}
 
 	//getUserInfo
@@ -58,17 +57,23 @@ public class TwitterClient extends OAuthBaseClient {
 		getClient().get(apiUrl, handler);
 	}
 
-
-/*	//composing tweet
-	public void postTweetOnTimeline(AsyncHttpResponseHandler handler){
-
-		String apiUrl= getApiUrl("statuses/home_timeline.json");
+	//composing tweet
+	public void postTweet(JsonHttpResponseHandler handler, String tweetBody) {
+		String apiUrl = getApiUrl("statuses/update.json");
 		RequestParams params = new RequestParams();
-		params.put("count", 25);
-		params.put("since", 1);
-		getClient().get(apiUrl, params, handler);
+		params.put("status", tweetBody);
+		getClient().post(apiUrl, params, handler);
+	}
 
-	}*/
+	//composing tweet
+	public void replyToTweetTweet(JsonHttpResponseHandler handler, String tweetBody, long tweetId) {
+		String apiUrl = getApiUrl("statuses/update.json");
+		RequestParams params = new RequestParams();
+		params.put("in_reply_to_status_id",tweetId);
+		params.put("status", tweetBody);
+		getClient().post(apiUrl, params, handler);
+	}
+
 
 	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
 	 * 	  i.e getApiUrl("statuses/home_timeline.json");

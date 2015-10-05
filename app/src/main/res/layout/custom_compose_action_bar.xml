@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/ivCancel_t"
+        android:layout_marginTop="10dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/white_back"
+        android:foregroundGravity="center_vertical" />
+
+    <Button
+        android:id="@+id/btnTweet_t"
+        android:layout_width="@dimen/compose_button_width"
+        android:layout_height="@dimen/compose_button_height"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:text="Tweet"
+        android:textAllCaps="false"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/white"
+        android:background="@color/skyblue" />
+
+    <TextView
+        android:id="@+id/tvCharCount_t"
+        android:text="char limit"
+        android:textColor="@color/dark_gray"
+        android:textSize="@dimen/char_count_text_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_alignBaseline="@+id/btnTweet_t"
+        android:layout_toLeftOf="@+id/btnTweet_t"
+  />
+
+
+</RelativeLayout>

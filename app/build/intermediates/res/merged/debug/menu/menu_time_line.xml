@@ -12,27 +12,6 @@
         android:onClick="composeTweet"
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/action_profile"
-        android:icon="@drawable/ic_profile"
-        android:orderInCategory="3"
-        android:title="profile"
 
-        app:showAsAction="always" />
-
-    <item
-        android:id="@+id/action_search"
-        android:icon="@drawable/ic_search"
-        android:orderInCategory="2"
-        android:title="search"
-        app:showAsAction="always" />
-
-
-    <item
-        android:id="@+id/action_notifications"
-        android:icon="@drawable/ic_notifications"
-        android:orderInCategory="1"
-        android:title="notifications"
-        app:showAsAction="always" />
 </menu>
 <!-- From: file:/Users/dbykovskyy/Git/practice/MyTweets/app/src/main/res/menu/menu_time_line.xml -->

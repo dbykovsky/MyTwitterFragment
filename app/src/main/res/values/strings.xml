@@ -8,6 +8,8 @@
     <string name="title_activity_time_line">TimeLineActivity</string>
     <string name="created_at">Created At</string>
 
+
+
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_compose_tweet">ComposeTweetActivity</string>
 
