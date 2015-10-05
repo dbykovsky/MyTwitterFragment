@@ -40,6 +40,7 @@ The following **additional** features are implemented:
 - Used custom support ActionBar layout inside Compose.Activity
 - Implemented reply from within listview/timeline
 - Showing number of retweets and favourites
+- Used SharedPreferences in thi project
 
 ## Video Walkthrough 
 
