@@ -41,8 +41,9 @@ import java.util.Locale;
 
 public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
     private TwitterClient client;
+    private ForegroundColorSpan span;
 
-    static class ViewHolder {
+    private class ViewHolder {
         TextView tvUserName;
         TextView tvTweetText;
         TextView tvTimeStamp;
@@ -51,11 +52,51 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         ImageView ivTwetImage;
         ImageView ivProfileImage;
         ImageView ivReplyToTweet;
+
+        public void bind(final Tweet tweet) {
+            Spannable userScreenName  = new SpannableString(tweet.getUser().getUserName()+" @" +tweet.getUser().getScreenName());
+            int spanStart = tweet.getUser().getUserName().length()+1;
+            int spanEnds = spanStart+tweet.getUser().getScreenName().length()+1;
+            userScreenName.setSpan(span, spanStart, spanEnds, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            this.tvUserName.setText(userScreenName);
+            this.tvTweetText.setText(tweet.getBody());
+            this.tvTimeStamp.setText(getRelativeTimeAgo(tweet.getCreatedAt()));
+
+            if(tweet.getRetweetCount()>0){
+               this.tvRetweetCount.setText(String.valueOf(tweet.getRetweetCount()));
+            }
+            if(tweet.getRetweetCount()>0) {
+                this.tvFavouritesCount.setText(String.valueOf(tweet.getFavouritesCount()));
+            }
+
+
+            this.ivTwetImage.setImageResource(0);
+            if(tweet.getMediaUrl()!=null){
+                Picasso.with(getContext()).load(tweet.getMediaUrl()).into(this.ivTwetImage);
+            }
+
+
+            this.ivProfileImage.setImageResource(0);
+            Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(this.ivProfileImage);
+
+
+            //listener to reply to a tweet
+            this.ivReplyToTweet.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    buildDialog(getContext(), tweet).show();
+
+                }
+            });
+        }
+
     }
 
 
     public TweetsArrayAdapter(Context context, List<Tweet> tweets) {
         super(context, R.layout.tweet_item, tweets);
+        span = new ForegroundColorSpan(getContext().getResources().getColor(R.color.twitter_gray));
     }
 
 
@@ -83,41 +124,8 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Spannable userScreenName  = new SpannableString(tweet.getUser().getUserName()+" @" +tweet.getUser().getScreenName());
-        int spanStart = tweet.getUser().getUserName().length()+1;
-        int spanEnds = spanStart+tweet.getUser().getScreenName().length()+1;
-        userScreenName.setSpan(new ForegroundColorSpan(getContext().getResources().getColor(R.color.twitter_gray)), spanStart, spanEnds, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        viewHolder.bind(tweet);
 
-        viewHolder.tvUserName.setText(userScreenName);
-        viewHolder.tvTweetText.setText(tweet.getBody());
-        viewHolder.tvTimeStamp.setText(getRelativeTimeAgo(tweet.getCreatedAt()));
-
-        if(tweet.getRetweetCount()>0){
-            viewHolder.tvRetweetCount.setText(String.valueOf(tweet.getRetweetCount()));
-        }
-        if(tweet.getRetweetCount()>0) {
-            viewHolder.tvFavouritesCount.setText(String.valueOf(tweet.getFavouritesCount()));
-        }
-
-
-        viewHolder.ivTwetImage.setImageResource(0);
-        if(tweet.getMediaUrl()!=null){
-            Picasso.with(getContext()).load(tweet.getMediaUrl()).into(viewHolder.ivTwetImage);
-        }
-
-
-        viewHolder.ivProfileImage.setImageResource(0);
-        Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(viewHolder.ivProfileImage);
-
-
-        //listener to reply to a tweet
-        viewHolder.ivReplyToTweet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buildDialog(getContext(), tweet).show();
-
-            }
-        });
 
 
         return convertView;
