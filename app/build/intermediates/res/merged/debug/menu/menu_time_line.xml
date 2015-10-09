@@ -5,6 +5,14 @@
 
 
     <item
+        android:id="@+id/user_profile"
+        android:icon="@drawable/ic_profile"
+        android:orderInCategory="4"
+        android:title="compose"
+        android:onClick="onProfileView"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_compose"
         android:icon="@drawable/ic_twitter_feather"
         android:orderInCategory="4"

@@ -19,11 +19,6 @@ import java.io.Serializable;
 public class User extends Model implements Serializable{
 
 
-    //private String userName;
-   // private long uid;
-    //private String screenName;
-    //private String profileImageUrl;
-
     @Column(name = "name")
     private String userName;
 
@@ -37,17 +32,27 @@ public class User extends Model implements Serializable{
     private String profileImageUrl;
 
 
+    @Column(name = "description")
+    private String description;
+
+
+    @Column(name = "followers_count")
+    private int followersCount;
+
+    @Column(name = "followings_count")
+    private int followingsCount;
+
+
     // Make sure to have a default constructor for every ActiveAndroid model
     public User (){
         super();
     }
 
 
-
-
     public static User fromJsonObject(JSONObject json){
 
         User u= new User();
+
 
         try {
             Long currentUid = json.getLong("id");
@@ -61,6 +66,9 @@ public class User extends Model implements Serializable{
             u.uid = json.getLong("id");
             u.screenName = json.getString("screen_name");
             u.profileImageUrl= json.getString("profile_image_url");
+            u.description = json.getString("description");
+            u.followersCount = json.getInt("followers_count");
+            u.followingsCount = json.getInt("friends_count");
             u.save();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -106,4 +114,35 @@ public class User extends Model implements Serializable{
     public void setUserName(String userName) {
         this.userName = userName;
     }
+
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setUid(Long uid) {
+        this.uid = uid;
+    }
+
+    public int getFollowingsCount() {
+        return followingsCount;
+    }
+
+    public void setFollowingsCount(int followingsCount) {
+        this.followingsCount = followingsCount;
+    }
+
+    public int getFollowersCount() {
+        return followersCount;
+    }
+
+    public void setFollowersCount(int followersCount) {
+        this.followersCount = followersCount;
+    }
+
+
 }

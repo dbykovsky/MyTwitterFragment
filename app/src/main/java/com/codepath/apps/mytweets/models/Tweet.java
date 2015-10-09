@@ -77,7 +77,7 @@ public class Tweet extends Model implements Serializable {
             tweet.createdAt=jsonObject.getString("created_at");
             tweet.favouritesCount=jsonObject.getInt("favorite_count");
             tweet.retweetCount= jsonObject.getInt("retweet_count");
-
+/*
             try{
                 JSONObject media = jsonObject.getJSONObject("entities");
                 if(media.getJSONArray("media")!=null){
@@ -91,7 +91,7 @@ public class Tweet extends Model implements Serializable {
                 if (tweet.mediaUrl==null){
                     tweet.mediaUrl="empty";
                 }
-            }
+            }*/
 
 
             tweet.user=User.fromJsonObject(jsonObject.getJSONObject("user"));

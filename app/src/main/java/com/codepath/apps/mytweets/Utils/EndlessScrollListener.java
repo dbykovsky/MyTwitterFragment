@@ -1,4 +1,4 @@
-package com.codepath.apps.mytweets.Utils;
+package com.codepath.apps.mytweets.utils;
 
 import android.widget.AbsListView;
 

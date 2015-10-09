@@ -50,12 +50,24 @@ public class TwitterClient extends OAuthBaseClient {
 		Log.d("My response homeTimelin", "GET is fine");
 	}
 
-	//getUserInfo
 
+	//get user timeline
+	public void getUserTimeline(String screenName, JsonHttpResponseHandler handler){
+		String apiUrl= getApiUrl("statuses/user_timeline.json");
+		RequestParams params = new RequestParams();
+		params.put("count", 25);
+		params.put("screen_name", screenName);
+		getClient().get(apiUrl, params, handler);
+	}
+
+
+	//getUserInfo
 	public void getCurrentUserInfo(JsonHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("account/verify_credentials.json");
-		getClient().get(apiUrl, handler);
+		getClient().get(apiUrl,null, handler);
 	}
+
+
 
 	//composing tweet
 	public void postTweet(JsonHttpResponseHandler handler, String tweetBody) {
@@ -65,14 +77,25 @@ public class TwitterClient extends OAuthBaseClient {
 		getClient().post(apiUrl, params, handler);
 	}
 
-	//composing tweet
+	//replying to a tweet
 	public void replyToTweetTweet(JsonHttpResponseHandler handler, String tweetBody, long tweetId) {
 		String apiUrl = getApiUrl("statuses/update.json");
 		RequestParams params = new RequestParams();
-		params.put("in_reply_to_status_id",tweetId);
+		params.put("in_reply_to_status_id", tweetId);
 		params.put("status", tweetBody);
 		getClient().post(apiUrl, params, handler);
 	}
+
+	//get mentions data
+	public void getMentionsTimeline(JsonHttpResponseHandler handler){
+		String apiUrl= getApiUrl("statuses/mentions_timeline.json");
+		RequestParams params = new RequestParams();
+		params.put("count", 25);
+		getClient().get(apiUrl, params, handler);
+		Log.d("My response params", apiUrl + " " + params.toString());
+		Log.d("My response homeTimelin", "GET is fine");
+	}
+
 
 
 	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint

@@ -20,10 +20,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.apps.mytweets.R;
+import com.codepath.apps.mytweets.activities.ProfileActivity;
 import com.codepath.apps.mytweets.activities.TimeLineActivity;
 import com.codepath.apps.mytweets.connection.TwitterApplication;
 import com.codepath.apps.mytweets.connection.TwitterClient;
 import com.codepath.apps.mytweets.models.Tweet;
+import com.codepath.apps.mytweets.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 
@@ -106,7 +108,6 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         final Tweet tweet = getItem(position);
         final ViewHolder viewHolder;
 
-
         if (convertView == null) {
             viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
@@ -125,6 +126,16 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         }
 
         viewHolder.bind(tweet);
+
+        viewHolder.ivProfileImage.setTag(tweet.getUser());
+        viewHolder.ivProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getContext(), ProfileActivity.class);
+                i.putExtra("user", (User) viewHolder.ivProfileImage.getTag()); // so we can use the same OnClickListener for every profile pic
+                getContext().startActivity(i);
+            }
+        });
 
 
 
