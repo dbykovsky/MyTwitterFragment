@@ -1819,8 +1819,9 @@ containing a value of this type.
         public static final int ic_star=0x7f020049;
         public static final int ic_twitter_bird=0x7f02004a;
         public static final int ic_twitter_feather=0x7f02004b;
-        public static final int notification_template_icon_bg=0x7f02004d;
-        public static final int white_back=0x7f02004c;
+        public static final int login_button=0x7f02004c;
+        public static final int notification_template_icon_bg=0x7f02004e;
+        public static final int white_back=0x7f02004d;
     }
     public static final class id {
         public static final int action0=0x7f0c0063;
@@ -1831,9 +1832,10 @@ containing a value of this type.
         public static final int action_bar_spinner=0x7f0c0001;
         public static final int action_bar_subtitle=0x7f0c0025;
         public static final int action_bar_title=0x7f0c0024;
-        public static final int action_compose=0x7f0c007f;
+        public static final int action_compose=0x7f0c0080;
         public static final int action_context_bar=0x7f0c0042;
         public static final int action_divider=0x7f0c0067;
+        public static final int action_logout=0x7f0c007e;
         public static final int action_menu_divider=0x7f0c0002;
         public static final int action_menu_presenter=0x7f0c0003;
         public static final int action_mode_bar=0x7f0c003e;
@@ -1946,7 +1948,7 @@ containing a value of this type.
         public static final int tv_user_screen_name_compose=0x7f0c0052;
         public static final int up=0x7f0c0008;
         public static final int useLogo=0x7f0c0012;
-        public static final int user_profile=0x7f0c007e;
+        public static final int user_profile=0x7f0c007f;
         public static final int user_profile_header=0x7f0c0054;
         public static final int viewpager=0x7f0c005e;
         public static final int withText=0x7f0c001f;
@@ -2046,11 +2048,12 @@ containing a value of this type.
         public static final int library_roundedimageview_licenseId=0x7f06001e;
         public static final int library_roundedimageview_repositoryLink=0x7f06001f;
         public static final int login_label=0x7f060020;
+        public static final int logout=0x7f060021;
         public static final int status_bar_notification_info_overflow=0x7f060011;
-        public static final int title_activity=0x7f060021;
-        public static final int title_activity_compose_tweet=0x7f060022;
-        public static final int title_activity_profile=0x7f060023;
-        public static final int title_activity_time_line=0x7f060024;
+        public static final int title_activity=0x7f060022;
+        public static final int title_activity_compose_tweet=0x7f060023;
+        public static final int title_activity_profile=0x7f060024;
+        public static final int title_activity_time_line=0x7f060025;
     }
     public static final class style {
         public static final int AlertDialog_AppCompat=0x7f08007b;

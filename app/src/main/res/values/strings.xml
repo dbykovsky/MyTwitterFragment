@@ -3,6 +3,7 @@
 
     <string name="app_name">MyTweets</string>
     <string name="action_settings">Settings</string>
+    <string name="logout">Logout</string>
     <string name="login_label">Log in</string>
     <string name="title_activity">Connect to twitter</string>
     <string name="title_activity_time_line">TimeLineActivity</string>

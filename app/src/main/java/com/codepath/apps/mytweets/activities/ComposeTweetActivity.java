@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,13 +21,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.codepath.apps.mytweets.R;
 import com.codepath.apps.mytweets.connection.TwitterApplication;
 import com.codepath.apps.mytweets.connection.TwitterClient;
 import com.codepath.apps.mytweets.models.Tweet;
-import com.codepath.apps.mytweets.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 
@@ -112,7 +109,7 @@ public class ComposeTweetActivity extends AppCompatActivity {
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             Log.d(COMPOSE_TWEET_ACTIVITY_TAG, response.toString());
                             Tweet tweet = new Tweet();
-                            tweet = Tweet.fromJsonObject(response);
+                            tweet = Tweet.fromJsonObject(response, "home");
                             Intent i = new Intent();
                             i.putExtra("newTweet", tweet);
                             setResult(RESULT_OK, i);

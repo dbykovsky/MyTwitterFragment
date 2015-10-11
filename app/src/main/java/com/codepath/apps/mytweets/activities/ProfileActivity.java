@@ -1,5 +1,6 @@
 package com.codepath.apps.mytweets.activities;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codepath.apps.mytweets.R;
 import com.codepath.apps.mytweets.connection.TwitterApplication;
@@ -125,7 +127,11 @@ public class ProfileActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_logout) {
+            client.clearAccessToken();
+            Toast.makeText(this, "You have been logged out successfully", Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(ProfileActivity.this, LoginActivity.class);
+            startActivity(i);
             return true;
         }
 

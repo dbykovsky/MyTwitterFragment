@@ -10,6 +10,9 @@
         android:id="@+id/tabs"
         app:pstsShouldExpand="true"
         app:pstsTextAllCaps="true"
+        app:pstsUnderlineColor="@color/darkblue_actionbar"
+        app:pstsDividerColor="@color/white"
+        app:pstsIndicatorColor="@color/skyblue"
         android:layout_width="match_parent"
         android:layout_height="48dp" />
 

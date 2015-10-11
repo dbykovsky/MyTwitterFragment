@@ -6,13 +6,21 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.codepath.apps.mytweets.R;
+import com.codepath.apps.mytweets.adapters.TweetsArrayAdapter;
 import com.codepath.apps.mytweets.connection.TwitterApplication;
 import com.codepath.apps.mytweets.connection.TwitterClient;
 import com.codepath.apps.mytweets.models.Tweet;
+import com.codepath.apps.mytweets.utils.EndlessScrollListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
@@ -22,7 +30,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import static com.codepath.apps.mytweets.models.Tweet.deleteAllTweetsFromDb;
-import static com.codepath.apps.mytweets.models.Tweet.getAllTweetsFromDb;
+import static com.codepath.apps.mytweets.models.Tweet.getAllTweetsFromDbWithKey;
 
 /**
  * Created by dbykovskyy on 10/6/15.
@@ -30,14 +38,69 @@ import static com.codepath.apps.mytweets.models.Tweet.getAllTweetsFromDb;
 public class HomeTimelineFragment extends TweetsListFragment {
 
     private TwitterClient client;
+    private TweetsArrayAdapter adapter;
     private static String TIMELINE_ACTIVITY_TAG = "HOME_TIMELINE_FRAGMENT";
+
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        adapter = this.adapterTweets;
         client = TwitterApplication.getRestClient();
         populateHomeTimeline(0, false);
     }
+
+
+    //in oreder to use on scroll we need onCreateViewMetod to be able to access this lv_tweets
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_tweets, container, false);
+        this.lv_tweets=(ListView) v.findViewById(R.id.lv_tweets);
+        this.lv_tweets.setAdapter(adapter);
+
+        // endless scroll
+        this.lv_tweets.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                // Restricting this by 15 pages to avoid lock from twitter
+                if (page <= 15) {
+                    populateHomeTimeline(page, false);
+                    return true;
+                } else
+                    return false;
+            }
+        });
+
+
+        // Setup refresh listener which triggers new data loading
+        swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+
+                populateHomeTimeline(0, true);
+
+            }
+
+        });
+
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+
+        return v;
+    }
+
 
 
     //Send API req to get timeline
@@ -47,9 +110,8 @@ public class HomeTimelineFragment extends TweetsListFragment {
         if(!isConnected(getContext())){
             buildDialog(getContext()).show();
             //this is only when launch app in offline mode
-            if(isAdapterEmpty()){
-                addAll(getAllTweetsFromDb());
-            }
+            adapter.clear();
+            adapter.addAll(getAllTweetsFromDbWithKey("home"));
             //in case user pull for updates
             //swipeContainer.setRefreshing(false);
 
@@ -58,26 +120,19 @@ public class HomeTimelineFragment extends TweetsListFragment {
             client.getHomeTimeline(page, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                    //clean up db when start up first time
-                    if (page == 0 && !isClean) {
-                        deleteAllTweetsFromDb();
-                    }
+
                     //get tweets form API and write to the array and db
-                    ArrayList<Tweet> tweets = Tweet.fromJsonArray(response);
-                    //add all tweets to the adapter
-                   // addAll(tweets);
-
-                    getAdapter().addAll(tweets);
-
-                    //refetch data on pull refresh
                     if(isClean){
-                        //clear adapter
-                        clear();
-                        //clear db
                         deleteAllTweetsFromDb();
-                        //add new tweets to the array and db
-                        addAll(tweets);
-                        //swipeContainer.setRefreshing(false);
+                        adapter.clear();
+                        ArrayList<Tweet> tweets = Tweet.fromJsonArray(response, "home");
+                        adapter.addAll(tweets);
+                        swipeContainer.setRefreshing(false);
+                        Toast.makeText(getContext(), "Home DATA on refresh", Toast.LENGTH_SHORT).show();
+                    }else {
+                        ArrayList<Tweet> tweets = Tweet.fromJsonArray(response, "home");
+                        adapter.addAll(tweets);
+                        Toast.makeText(getContext(), "Home DATA loaded", Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -93,7 +148,7 @@ public class HomeTimelineFragment extends TweetsListFragment {
             });
 
 
-        }
+       }
 
     }
 

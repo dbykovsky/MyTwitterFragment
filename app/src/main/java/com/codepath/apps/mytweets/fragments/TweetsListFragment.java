@@ -3,6 +3,7 @@ package com.codepath.apps.mytweets.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,9 @@ public class TweetsListFragment extends Fragment{
 
     private ArrayList<Tweet> tweets;
     protected TweetsArrayAdapter adapterTweets;
-    private ListView lv_tweets;
+    protected ListView lv_tweets;
+    protected SwipeRefreshLayout swipeContainer;
+
 
 
     //inflation logic
@@ -34,6 +37,7 @@ public class TweetsListFragment extends Fragment{
         View v = inflater.inflate(R.layout.fragment_tweets, container, false);
         lv_tweets = (ListView) v.findViewById(R.id.lv_tweets);
         lv_tweets.setAdapter(adapterTweets);
+        swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
         return v;
     }
 
@@ -57,16 +61,16 @@ public class TweetsListFragment extends Fragment{
 
 
     public void appendTweet(Tweet newTweet) {
-        adapterTweets.insert(newTweet, 0);
+        this.adapterTweets.insert(newTweet, 0);
     }
 
     public void clear() {
-        adapterTweets.clear();
+        this.adapterTweets.clear();
     }
 
 
     public TweetsArrayAdapter getAdapter(){
-        return adapterTweets;
+        return this.adapterTweets;
     }
 
 

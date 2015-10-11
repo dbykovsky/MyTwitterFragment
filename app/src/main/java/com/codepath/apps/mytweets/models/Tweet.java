@@ -52,14 +52,18 @@ public class Tweet extends Model implements Serializable {
     @Column(name = "time_stamp")
     private String timestamp;
 
+
+    @Column(name = "tag")
+    private String tag;
+
+
     public Tweet(){
         super();
     }
 
 
 
-
-    public static Tweet fromJsonObject(JSONObject jsonObject){
+    public static Tweet fromJsonObject(JSONObject jsonObject, String tag){
         Tweet tweet = new Tweet();
 
         try {
@@ -77,7 +81,6 @@ public class Tweet extends Model implements Serializable {
             tweet.createdAt=jsonObject.getString("created_at");
             tweet.favouritesCount=jsonObject.getInt("favorite_count");
             tweet.retweetCount= jsonObject.getInt("retweet_count");
-/*
             try{
                 JSONObject media = jsonObject.getJSONObject("entities");
                 if(media.getJSONArray("media")!=null){
@@ -91,9 +94,9 @@ public class Tweet extends Model implements Serializable {
                 if (tweet.mediaUrl==null){
                     tweet.mediaUrl="empty";
                 }
-            }*/
+            }
 
-
+            tweet.tag = tag;
             tweet.user=User.fromJsonObject(jsonObject.getJSONObject("user"));
             tweet.save();
         } catch (JSONException e) {
@@ -104,14 +107,14 @@ public class Tweet extends Model implements Serializable {
     }
 
 
-    public static ArrayList<Tweet> fromJsonArray(JSONArray response){
+    public static ArrayList<Tweet> fromJsonArray(JSONArray response, String tag){
         ArrayList<Tweet> tweetArray = new ArrayList<>();
 
         for(int i=0; i<response.length(); i++){
 
             try {
                 JSONObject jsonObject = response.getJSONObject(i);
-                Tweet tweet = fromJsonObject(jsonObject);
+                Tweet tweet = fromJsonObject(jsonObject, tag);
                 if(tweet!=null){
                     tweetArray.add(tweet);
                 }
@@ -129,6 +132,15 @@ public class Tweet extends Model implements Serializable {
         ArrayList<Tweet> alTweets = new ArrayList<>();
         List<Tweet> lTweets = new Select()
                 .from(Tweet.class)
+                .execute();
+        alTweets.addAll(lTweets);
+        return alTweets;
+    }
+
+    public static ArrayList<Tweet> getAllTweetsFromDbWithKey(String tag) {
+        ArrayList<Tweet> alTweets = new ArrayList<>();
+        List<Tweet> lTweets = new Select()
+                .from(Tweet.class).where("tag = ?", tag)
                 .execute();
         alTweets.addAll(lTweets);
         return alTweets;
@@ -213,6 +225,18 @@ public class Tweet extends Model implements Serializable {
 
     public void setMediaUrl(String mediaUrl) {
         this.mediaUrl = mediaUrl;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public void setRetweetCount(int retweetCount) {
+        this.retweetCount = retweetCount;
     }
 
 

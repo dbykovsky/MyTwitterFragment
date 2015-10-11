@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -31,7 +32,11 @@ import com.codepath.apps.mytweets.models.Tweet;
 public class TimeLineActivity extends AppCompatActivity {
     private final String TIMELINE_ACTIVITY_TAG = "TIMELINE_ACTIVITY";
     private final int REQUEST_CODE = 777;
+
+    private  ViewPager vpPager;
     private TweetsListFragment fragmentTweetList;
+    HomeTimelineFragment homeTimelineFragment;
+    MentionsTimelineFragment mentionsFragment;
 
 
     @Override
@@ -136,7 +141,6 @@ public class TimeLineActivity extends AppCompatActivity {
 
 
         Intent i = new Intent(this, ProfileActivity.class);
-
         i.putExtra("user_name", "@dbykovskyy");
         startActivity(i);
 
@@ -145,16 +149,17 @@ public class TimeLineActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent i) {
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
             Tweet newTweet = (Tweet) i.getSerializableExtra("newTweet");
-            HomeTimelineFragment fragmentTweetList = (HomeTimelineFragment) getSupportFragmentManager()
-                    .findFragmentByTag(getFragmentName(R.id.viewpager, 0));
+            HomeTimelineFragment fragmentTweetList =
+                    (HomeTimelineFragment) getSupportFragmentManager()
+                            .findFragmentByTag(getFragmentName(R.id.viewpager, 0));
             fragmentTweetList.appendTweet(newTweet);
             fragmentTweetList.populateHomeTimeline(0, false);
+
         }
     }
 
 
     public class TweetPagerAdapter extends FragmentPagerAdapter{
-        final int PAGE_COUNT= 2;
         private String tabTitles[]= {"Home","Mentions"};
 
         public TweetPagerAdapter(FragmentManager fm){
@@ -171,6 +176,7 @@ public class TimeLineActivity extends AppCompatActivity {
                return null;
            }
         }
+
         // returns tab title at top
         @Override
         public CharSequence getPageTitle(int position) {
