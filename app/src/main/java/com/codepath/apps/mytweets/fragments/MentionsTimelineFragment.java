@@ -37,7 +37,7 @@ import static com.codepath.apps.mytweets.models.Tweet.getAllTweetsFromDbWithKey;
  */
 public class MentionsTimelineFragment extends TweetsListFragment{
 
-    ArrayList<Tweet> tweets;
+    private ArrayList<Tweet> tweets;
     private TwitterClient client;
     private TweetsArrayAdapter adapter;
     private static String MENTIONS_ACTIVITY_TAG = "MENTIONS_TIMELINE_FRAGMENT";

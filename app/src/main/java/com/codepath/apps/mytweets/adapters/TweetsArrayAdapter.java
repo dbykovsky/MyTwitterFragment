@@ -3,6 +3,14 @@ package com.codepath.apps.mytweets.adapters;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -34,6 +42,7 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -54,6 +63,7 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         ImageView ivTwetImage;
         ImageView ivProfileImage;
         ImageView ivReplyToTweet;
+        ImageView ivFavouriteStar;
 
         public void bind(final Tweet tweet) {
             Spannable userScreenName  = new SpannableString(tweet.getUser().getUserName()+" @" +tweet.getUser().getScreenName());
@@ -66,18 +76,29 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
             this.tvTimeStamp.setText(getRelativeTimeAgo(tweet.getCreatedAt()));
 
             if(tweet.getRetweetCount()>0){
-               this.tvRetweetCount.setText(String.valueOf(tweet.getRetweetCount()));
+                this.tvRetweetCount.setText(String.valueOf(tweet.getRetweetCount()));
             }
             if(tweet.getRetweetCount()>0) {
                 this.tvFavouritesCount.setText(String.valueOf(tweet.getFavouritesCount()));
             }
-
 
             this.ivTwetImage.setImageResource(0);
             if(tweet.getMediaUrl()!=null){
                 Picasso.with(getContext()).load(tweet.getMediaUrl()).into(this.ivTwetImage);
             }
 
+            Drawable dr = getContext().getResources().getDrawable(R.drawable.ic_star);
+            ColorFilter filter;
+            if(tweet.getFavorited()){
+                //make yellow
+                filter = new LightingColorFilter(Color.rgb(255,219,0), Color.rgb(255,219,0));
+
+            } else{
+                //make grey
+                filter = new LightingColorFilter(Color.rgb(155,172,183), Color.rgb(74,82,96));
+            }
+            dr.setColorFilter(filter);
+            this.ivFavouriteStar.setImageDrawable(dr);
 
             this.ivProfileImage.setImageResource(0);
             Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(this.ivProfileImage);
@@ -91,6 +112,38 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 
                 }
             });
+
+            //favorite
+            this.ivFavouriteStar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int favouritesCount;
+                    Drawable dr = getContext().getResources().getDrawable(R.drawable.ic_star);
+                    ColorFilter filter;
+
+                    if(tweet.getFavorited()){
+                        favouritesCount = tweet.getFavouritesCount()-1;
+                        tvFavouritesCount.setText(String.valueOf(favouritesCount));
+                        filter = new LightingColorFilter(Color.rgb(155,172,183), Color.rgb(74,82,96));
+                        dr.setColorFilter(filter);
+                        v.setBackground(dr);
+                        tweet.setFavorited(false);
+                        tweet.setFavouritesCount(favouritesCount);
+                    }else{
+                        favouritesCount = tweet.getFavouritesCount()+1;
+                        tvFavouritesCount.setText(String.valueOf(favouritesCount));
+                        filter = new LightingColorFilter(Color.rgb(255,219,0), Color.rgb(255,219,0));
+                        dr.setColorFilter(filter);
+                        v.setBackground(dr);
+                        tweet.setFavorited(true);
+                        tweet.setFavouritesCount(favouritesCount);
+                    }
+
+
+                }
+            });
+
+
         }
 
     }
@@ -120,6 +173,7 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
             viewHolder.tvFavouritesCount = (TextView) convertView.findViewById(R.id.tvFavoritest);
             viewHolder.ivTwetImage = (ImageView) convertView.findViewById(R.id.iv_tweetImage);
             viewHolder.ivReplyToTweet = (ImageView) convertView.findViewById(R.id.ivReply);
+            viewHolder.ivFavouriteStar = (ImageView)convertView.findViewById(R.id.ivFavorite);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -128,6 +182,7 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         viewHolder.bind(tweet);
 
         viewHolder.ivProfileImage.setTag(tweet.getUser());
+
         viewHolder.ivProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

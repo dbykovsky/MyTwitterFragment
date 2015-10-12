@@ -57,6 +57,10 @@ public class Tweet extends Model implements Serializable {
     private String tag;
 
 
+    @Column(name = "favorited")
+    private Boolean favorited;
+
+
     public Tweet(){
         super();
     }
@@ -81,6 +85,8 @@ public class Tweet extends Model implements Serializable {
             tweet.createdAt=jsonObject.getString("created_at");
             tweet.favouritesCount=jsonObject.getInt("favorite_count");
             tweet.retweetCount= jsonObject.getInt("retweet_count");
+            tweet.favorited = jsonObject.getBoolean("favorited");
+
             try{
                 JSONObject media = jsonObject.getJSONObject("entities");
                 if(media.getJSONArray("media")!=null){
@@ -237,6 +243,14 @@ public class Tweet extends Model implements Serializable {
 
     public void setRetweetCount(int retweetCount) {
         this.retweetCount = retweetCount;
+    }
+
+    public Boolean getFavorited() {
+        return favorited;
+    }
+
+    public void setFavorited(Boolean favorited) {
+        this.favorited = favorited;
     }
 
 

@@ -2,11 +2,20 @@ package com.codepath.apps.mytweets.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.Toast;
 
+import com.codepath.apps.mytweets.R;
 import com.codepath.apps.mytweets.adapters.TweetsArrayAdapter;
 import com.codepath.apps.mytweets.connection.TwitterApplication;
 import com.codepath.apps.mytweets.connection.TwitterClient;
 import com.codepath.apps.mytweets.models.Tweet;
+import com.codepath.apps.mytweets.utils.EndlessScrollListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
@@ -15,12 +24,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.codepath.apps.mytweets.models.Tweet.deleteAllTweetsFromDb;
+
 /**
  * Created by dbykovskyy on 10/6/15.
  */
 public class UserTimelineFragment extends TweetsListFragment {
     private TwitterClient client;
     private TweetsArrayAdapter adapter;
+    private ArrayList<Tweet> tweets;
 
 
     @Override
@@ -28,7 +40,7 @@ public class UserTimelineFragment extends TweetsListFragment {
         super.onCreate(savedInstanceState);
         adapter = this.adapterTweets;
         client = TwitterApplication.getRestClient();
-        populateTimeline(0,false);
+        populateUserTimeline(0, false);
     }
 
     // Creates a new fragment given an int and title
@@ -42,38 +54,83 @@ public class UserTimelineFragment extends TweetsListFragment {
     }
 
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_tweets, container, false);
+        this.lv_tweets=(ListView) v.findViewById(R.id.lv_tweets);
+        this.lv_tweets.setAdapter(adapter);
 
-        //Send API req to get timeline
+
+        // endless scroll
+        this.lv_tweets.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                // Restricting this by 15 pages to avoid lock from twitter
+                if (page <= 15) {
+                    long maxId= tweets.get(tweets.size()-1).getUid()-1;
+                    populateUserTimeline(maxId, false);
+                    return true;
+                } else
+                    return false;
+            }
+        });
+
+
+        // Setup refresh listener which triggers new data loading
+        swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                populateUserTimeline(0, true);
+
+            }
+
+        });
+
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+
+        return v;
+    }
+
+
+
+    //Send API req to get timeline
     //Fill out listview
-    private void populateTimeline(final int page, final boolean isClean) {
+    private void populateUserTimeline(final long maxId, final boolean isClean) {
 
         String screenName = getArguments().getString("screenName");
 
-        client.getUserTimeline(screenName, new JsonHttpResponseHandler() {
+        client.getUserTimeline( maxId, screenName, new JsonHttpResponseHandler() {
+
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                //clean up db when start up first time
-               /* if (page == 0 && !isClean) {
+                tweets = Tweet.fromJsonArray(response, "usertimeline");
+
+                if(isClean){
                     deleteAllTweetsFromDb();
-                    /*//****************** remove it later
+                    adapter.clear();
 
-                }*/
+                    adapter.addAll(tweets);
+                    Log.d("My response userFresh", response.toString());
+                    swipeContainer.setRefreshing(false);
+                    Toast.makeText(getContext(), "Users DATA on refresh", Toast.LENGTH_SHORT).show();
+                }else {
+                    adapter.addAll(tweets);
+                    Log.d("My response user", response.toString());
+                    Toast.makeText(getContext(), "Users DATA loaded", Toast.LENGTH_SHORT).show();
+                }
 
-                ArrayList<Tweet> tweets = Tweet.fromJsonArray(response, "usertimeline");
-                //get tweets form DB and write to the array
-                //addAll(Tweet.fromJsonArray(response));
-                //getAdapter().addAll(tweets);
-                adapter.addAll(tweets);
-
-
-
-                //refetch data on pull refresh
-  /*              if (isClean) {
-                    *//*    adapterTweets.clear();
-                        deleteAllTweetsFromDb();
-                        adapterTweets.addAll(tweets);*//*
-                    //swipeContainer.setRefreshing(false);
-                }*/
 
             }
 
@@ -82,7 +139,7 @@ public class UserTimelineFragment extends TweetsListFragment {
                 if (errorResponse != null) {
                     //   Log.d(TIMELINE_ACTIVITY_TAG, errorResponse.toString());
                 }
-                // Log.d(TIMELINE_ACTIVITY_TAG, throwable.toString());
+                 //Log.d(TIMELINE_ACTIVITY_TAG, throwable.toString());
             }
 
         });

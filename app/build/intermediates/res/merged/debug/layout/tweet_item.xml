@@ -93,7 +93,6 @@
 
         <TextView
             android:id="@+id/tvRetweets"
-            android:text="11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/dark_gray"
@@ -117,9 +116,7 @@
 
         <ImageView
             android:id="@+id/ivFavorite"
-            android:background="@drawable/ic_star"
             android:layout_marginLeft="@dimen/tweet_actions_margin_25dp"
-            android:backgroundTint="@color/twitter_gray"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/dummy"
@@ -138,7 +135,6 @@
 
             android:layout_toLeftOf="@+id/ivAdd"
             android:layout_alignParentTop="true"
-            android:text="22"
             android:layout_centerHorizontal="true" />
 
         <ImageView

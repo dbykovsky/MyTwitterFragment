@@ -32,14 +32,10 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
         client = TwitterApplication.getRestClient();
+
         //Get users info
-
-
         user = (User) getIntent().getSerializableExtra("user");
-        client = TwitterApplication.getRestClient();
-
         if (user != null && savedInstanceState == null) {
             getSupportActionBar().setTitle("@" + user.getScreenName());
             populateProfileHeader(user);
