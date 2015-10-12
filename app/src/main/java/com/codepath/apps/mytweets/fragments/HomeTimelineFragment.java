@@ -41,8 +41,6 @@ public class HomeTimelineFragment extends TweetsListFragment {
     private TweetsArrayAdapter adapter;
     private static String TIMELINE_ACTIVITY_TAG = "HOME_TIMELINE_FRAGMENT";
 
-
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,31 +106,34 @@ public class HomeTimelineFragment extends TweetsListFragment {
     public void populateHomeTimeline(final int page, final boolean isClean){
 
         if(!isConnected(getContext())){
-            buildDialog(getContext()).show();
+            //buildDialog(getContext()).show();
             //this is only when launch app in offline mode
             adapter.clear();
             adapter.addAll(getAllTweetsFromDbWithKey("home"));
-            //in case user pull for updates
-            //swipeContainer.setRefreshing(false);
+            if(swipeContainer!=null){
+                swipeContainer.setRefreshing(false);
+            }
 
-        }else{
+
+        }else {
 
             client.getHomeTimeline(page, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 
                     //get tweets form API and write to the array and db
-                    if(isClean){
+                    ArrayList<Tweet> tweets = Tweet.fromJsonArray(response, "home");
+                    if (isClean) {
                         deleteAllTweetsFromDb();
                         adapter.clear();
-                        ArrayList<Tweet> tweets = Tweet.fromJsonArray(response, "home");
                         adapter.addAll(tweets);
                         swipeContainer.setRefreshing(false);
-                        Toast.makeText(getContext(), "Home DATA on refresh", Toast.LENGTH_SHORT).show();
-                    }else {
-                        ArrayList<Tweet> tweets = Tweet.fromJsonArray(response, "home");
+                        //debugging
+                        //Toast.makeText(getContext(), "Home DATA on refresh", Toast.LENGTH_SHORT).show();
+                    } else {
                         adapter.addAll(tweets);
-                        Toast.makeText(getContext(), "Home DATA loaded", Toast.LENGTH_SHORT).show();
+                        //debugging
+                        //Toast.makeText(getContext(), "Home DATA loaded", Toast.LENGTH_SHORT).show();
                     }
 
                 }

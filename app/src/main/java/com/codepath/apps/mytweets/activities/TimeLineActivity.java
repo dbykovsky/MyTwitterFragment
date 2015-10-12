@@ -33,10 +33,6 @@ public class TimeLineActivity extends AppCompatActivity {
     private final String TIMELINE_ACTIVITY_TAG = "TIMELINE_ACTIVITY";
     private final int REQUEST_CODE = 777;
 
-    private  ViewPager vpPager;
-    private TweetsListFragment fragmentTweetList;
-    HomeTimelineFragment homeTimelineFragment;
-    MentionsTimelineFragment mentionsFragment;
 
 
     @Override
@@ -61,50 +57,7 @@ public class TimeLineActivity extends AppCompatActivity {
         //Attach the tabstrip to the viewpager
         tabStrip.setViewPager(vpPager);
 
-
-
-        //on scroll listener
-/*        lv_tweets.setOnScrollListener(new EndlessScrollListener() {
-            @Override
-            public boolean onLoadMore(int page, int totalItemsCount) {
-                //added some page limit to avoid 15min block from Twitter
-                if (page <= 15) {
-                    populateTimeline(page, false);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });*/
     }
-
-
-
-/*        // Setup refresh listener which triggers new data loading
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-
-            @Override
-
-            public void onRefresh() {
-
-                // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
-
-                populateTimeline(0, true);
-
-            }
-
-        });*/
-
-/*        // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
-
-    }*/
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -133,13 +86,9 @@ public class TimeLineActivity extends AppCompatActivity {
             Intent intent = new Intent(TimeLineActivity.this, ComposeTweetActivity.class);
             startActivityForResult(intent, 777);
         }
-
     }
 
     public void onProfileView(MenuItem menuItem){
-
-
-
         Intent i = new Intent(this, ProfileActivity.class);
         i.putExtra("user_name", "@dbykovskyy");
         startActivity(i);

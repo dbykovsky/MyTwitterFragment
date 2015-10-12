@@ -1,8 +1,13 @@
 package com.codepath.apps.mytweets.fragments;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +30,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import static com.codepath.apps.mytweets.models.Tweet.deleteAllTweetsFromDb;
+import static com.codepath.apps.mytweets.models.Tweet.getAllTweetsFromDbWithKey;
 
 /**
  * Created by dbykovskyy on 10/6/15.
@@ -33,6 +39,7 @@ public class UserTimelineFragment extends TweetsListFragment {
     private TwitterClient client;
     private TweetsArrayAdapter adapter;
     private ArrayList<Tweet> tweets;
+    private static String USER_FRAGMENT = "USER_FRAGMENT";
 
 
     @Override
@@ -111,40 +118,83 @@ public class UserTimelineFragment extends TweetsListFragment {
 
         String screenName = getArguments().getString("screenName");
 
-        client.getUserTimeline( maxId, screenName, new JsonHttpResponseHandler() {
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                tweets = Tweet.fromJsonArray(response, "usertimeline");
-
-                if(isClean){
-                    deleteAllTweetsFromDb();
-                    adapter.clear();
-
-                    adapter.addAll(tweets);
-                    Log.d("My response userFresh", response.toString());
-                    swipeContainer.setRefreshing(false);
-                    Toast.makeText(getContext(), "Users DATA on refresh", Toast.LENGTH_SHORT).show();
-                }else {
-                    adapter.addAll(tweets);
-                    Log.d("My response user", response.toString());
-                    Toast.makeText(getContext(), "Users DATA loaded", Toast.LENGTH_SHORT).show();
-                }
-
-
+        if(!isConnected(getContext())){
+            buildDialog(getContext()).show();
+            //this is only when launch app in offline mode
+            adapter.clear();
+            adapter.addAll(getAllTweetsFromDbWithKey("usertimeline"));
+            if(swipeContainer!=null) {
+                swipeContainer.setRefreshing(false);
             }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                if (errorResponse != null) {
-                    //   Log.d(TIMELINE_ACTIVITY_TAG, errorResponse.toString());
+        }else {
+            client.getUserTimeline(maxId, screenName, new JsonHttpResponseHandler() {
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+
+                    tweets = Tweet.fromJsonArray(response, "usertimeline");
+                    if (isClean) {
+                        deleteAllTweetsFromDb();
+                        adapter.clear();
+                        adapter.addAll(tweets);
+                        Log.d("My response userFresh", response.toString());
+                        swipeContainer.setRefreshing(false);
+                        //debugging
+                        //Toast.makeText(getContext(), "Users DATA on refresh", Toast.LENGTH_SHORT).show();
+                    } else {
+                        adapter.addAll(tweets);
+                        Log.d("My response user", response.toString());
+                        //debugging
+                        //Toast.makeText(getContext(), "Users DATA loaded", Toast.LENGTH_SHORT).show();
+                    }
+
+
                 }
-                 //Log.d(TIMELINE_ACTIVITY_TAG, throwable.toString());
-            }
 
-        });
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    if (errorResponse != null) {
+                        Log.d(USER_FRAGMENT, errorResponse.toString());
+                    }
+                    Log.d(USER_FRAGMENT, throwable.toString());
+                }
 
+            });
 
+        }
 
     }
+
+    public boolean isConnected(Context context) {
+
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netinfo = cm.getActiveNetworkInfo();
+
+        if (netinfo != null && netinfo.isConnectedOrConnecting()) {
+            android.net.NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            android.net.NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+            if((mobile != null && mobile.isConnectedOrConnecting()) || (wifi != null && wifi.isConnectedOrConnecting())) return true;
+            else return false;
+        } else return false;
+    }
+
+
+    public AlertDialog.Builder buildDialog(Context c) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(c,android.R.style.Theme_Material_Light_Dialog_NoActionBar);
+        builder.setTitle("No Internet connection.");
+        builder.setMessage("Only offline content available");
+        builder.setIcon(R.drawable.ic_twitter_bird);
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+        return builder;
+    }
+
+
 }

@@ -68,7 +68,12 @@ public class MentionsTimelineFragment extends TweetsListFragment{
                 // Restricting this by 15 pages to avoid lock from twitter
                 if (page <= 15) {
                     //get last mention tweet id
-                    long maxId= tweets.get(tweets.size()-1).getUid()-1;
+                    long maxId;
+                    if(tweets==null){
+                        maxId=0;
+                    }else
+                        maxId= tweets.get(tweets.size()-1).getUid()-1;
+
                     populateMentionsTimeline(maxId, false);
                     return true;
 
@@ -109,11 +114,11 @@ public class MentionsTimelineFragment extends TweetsListFragment{
 
         if(!isConnected(getContext())){
             buildDialog(getContext()).show();
-            //this is only when launch app in offline mode
             adapter.clear();
             adapter.addAll(getAllTweetsFromDbWithKey("mentions"));
-            //in case user pull for updates
-            //swipeContainer.setRefreshing(false);
+            if(swipeContainer!=null){
+                swipeContainer.setRefreshing(false);
+            }
 
         }else{
 
@@ -121,52 +126,22 @@ public class MentionsTimelineFragment extends TweetsListFragment{
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 
-
                 //get tweets form API and write to the array and db
+                tweets = Tweet.fromJsonArray(response, "mentions");
                 if(isClean){
                     deleteAllTweetsFromDb();
                     adapter.clear();
-                    tweets = Tweet.fromJsonArray(response, "home");
                     adapter.addAll(tweets);
                     Log.d("My response mentFresh", response.toString());
                     swipeContainer.setRefreshing(false);
-                    Toast.makeText(getContext(), "Mentions DATA on refresh", Toast.LENGTH_SHORT).show();
+                    //debugging
+                    //Toast.makeText(getContext(), "Mentions DATA on refresh", Toast.LENGTH_SHORT).show();
                 }else {
-                    tweets = Tweet.fromJsonArray(response, "home");
                     adapter.addAll(tweets);
                     Log.d("My response mentions", response.toString());
-                    Toast.makeText(getContext(), "Mentions DATA loaded", Toast.LENGTH_SHORT).show();
+                    //debugging
+                    //Toast.makeText(getContext(), "Mentions DATA loaded", Toast.LENGTH_SHORT).show();
                 }
-
-/*
-
-
-                //clean up db when start up first time
-                if (maxId == 0 && !isClean) {
-                    //deleteAllTweetsFromDb();
-                    Toast.makeText(getContext(), "Mentions DB is Loaded", Toast.LENGTH_SHORT).show();
-                }
-                Log.d("My response mentions", response.toString());
-
-                tweets = Tweet.fromJsonArray(response, "mentions");
-                adapter.addAll(tweets);
-                Toast.makeText(getContext(), "Mentions DATA is loaded", Toast.LENGTH_SHORT).show();
-*/
-
-
-/*
-
-                adapter.addAll(tweets);
-
-                //getAllTweetsFromDbWithKey()
-
-/*                //refetch data on pull refresh
-                if (isClean) {
-                    *//*    adapterTweets.clear();
-                        deleteAllTweetsFromDb();
-                        adapterTweets.addAll(tweets);*//*
-                    //swipeContainer.setRefreshing(false);
-                }*/
 
             }
 
